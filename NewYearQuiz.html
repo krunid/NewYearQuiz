@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบทดสอบเรื่องวันขึ้นปีใหม่</title>
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #e6e6fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        .progress {
+            width: 0%;
+            height: 100%;
+            background-color: #4CAF50;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        .timer {
+            font-size: 24px;
+            text-align: center;
+            margin: 10px 0;
+            color: #333;
+        }
+        .question {
+            display: none;
+            margin: 20px 0;
+            padding: 15px;
+            background: linear-gradient(135deg, #9b8adff0, #8b5cf6);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .question h3 {
+            color: #ffffff;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        .option {
+            display: block;
+            width: 100%;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #4a5568;
+            font-size: 1.1em;
+            text-align: left;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .option:hover {
+            background: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .selected {
+            background: linear-gradient(135deg, #4299e1, #667eea);
+            color: white;
+            transform: scale(1.02);
+        }
+        .correct {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            transform: scale(1.02);
+            animation: pulse 1s;
+        }
+        .incorrect {
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+            color: white;
+            transform: scale(1.02);
+            animation: shake 0.5s;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1.02); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        #startForm {
+            text-align: center;
+        }
+        #nameInput {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            max-width: 300px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>แบบทดสอบเรื่องวันขึ้นปีใหม่</h1>
+        
+        <div id="startForm">
+            <h2>คำชี้แจง</h2>
+            <p>ให้ผู้เรียนเลือกคำตอบที่ถูกต้องเพียงข้อเดียว โดยแต่ละข้อมีเวลาทำ 30 วินาที</p>
+            <input type="text" id="nameInput" placeholder="กรุณากรอกชื่อ-นามสกุล" required>
+            <br>
+            <button onclick="startQuiz()">เริ่มทำแบบทดสอบ</button>
+        </div>
+
+        <div id="quizContent" style="display: none;">
+            <div class="timer" id="timer">30</div>
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+
+            <div id="questions">
+                <!-- Questions will be dynamically inserted here -->
+            </div>
+
+            <div id="result">
+                <h2>ผลการทดสอบ</h2>
+                <p>คุณ <span id="resultName"></span></p>
+                <p>ได้คะแนน: <span id="score"></span> / 10</p>
+                <button onclick="restartQuiz()">เริ่มทำใหม่</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "1. วันขึ้นปีใหม่สากลตรงกับวันที่เท่าไร?",
+                options: ["1 มกราคม", "13 เมษายน", "31 ธันวาคม", "5 พฤษภาคม"],
+                correct: 0
+            },
+            {
+                question: "2. การนับปีปฏิทินสากลเริ่มต้นจากเหตุการณ์ใด?",
+                options: ["การประสูติของพระพุทธเจ้า", "การประสูติของพระเยซู", "การสร้างกรุงโรม", "การค้นพบทวีปอเมริกา"],
+                correct: 1
+            },
+            {
+                question: "3. ประเทศใดเป็นประเทศแรกที่เข้าสู่วันขึ้นปีใหม่?",
+                options: ["ญี่ปุ่น", "ออสเตรเลีย", "นิวซีแลนด์", "ฟิจิ"],
+                correct: 2
+            },
+            {
+                question: "4. สัญลักษณ์ใดที่มักพบเห็นในเทศกาลปีใหม่?",
+                options: ["ต้นคริสต์มาส", "พลุดอกไม้ไฟ", "ไข่อีสเตอร์", "กระทง"],
+                correct: 1
+            },
+            {
+                question: "5. การฉลองปีใหม่ในประเทศไทยได้รับอิทธิพลมาจากชาติใด?",
+                options: ["จีน", "อินเดีย", "ตะวันตก", "ญี่ปุ่น"],
+                correct: 2
+            },
+            {
+                question: "6. ก่อนที่ไทยจะใช้วันที่ 1 มกราคมเป็นวันขึ้นปีใหม่ เดิมใช้วันใด?",
+                options: ["1 เมษายน", "13 เมษายน", "1 ธันวาคม", "15 เมษายน"],
+                correct: 0
+            },
+            {
+                question: "7. ประเทศไทยเริ่มใช้วันที่ 1 มกราคม เป็นวันขึ้นปีใหม่ในรัชสมัยใด?",
+                options: ["รัชกาลที่ 5", "รัชกาลที่ 6", "รัชกาลที่ 7", "รัชกาลที่ 8"],
+                correct: 2
+            },
+            {
+                question: "8. เพลง Auld Lang Syne ที่นิยมร้องในวันปีใหม่มีต้นกำเนิดจากประเทศใด?",
+                options: ["อังกฤษ", "สกอตแลนด์", "ไอร์แลนด์", "เวลส์"],
+                correct: 1
+            },
+            {
+                question: "9. ธรรมเนียมการนับถอยหลังในคืนวันส่งท้ายปีเก่าเริ่มต้นจากเมืองใด?",
+                options: ["ลอนดอน", "นิวยอร์ก", "ปารีส", "โตเกียว"],
+                correct: 1
+            },
+            {
+                question: "10. ข้อใดไม่ใช่ประเพณีในวันขึ้นปีใหม่ของไทย?",
+                options: ["ทำบุญตักบาตร", "สรงน้ำพระ", "รดน้ำดำหัวผู้ใหญ่", "ส่งการ์ดอวยพร"],
+                correct: 2
+            }
+        ];
+
+        let currentQuestion = 0;
+        let timer;
+        let score = 0;
+        let timeLeft = 30;
+        let userAnswers = [];
+        // เพิ่มสไตล์สำหรับตารางเปรียบเทียบคำตอบ
+        const styles = document.createElement('style');
+        styles.textContent = `
+            .comparison-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+                background: white;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            .comparison-table th, .comparison-table td {
+                padding: 12px;
+                border: 1px solid #e2e8f0;
+                text-align: left;
+            }
+            .comparison-table th {
+                background: linear-gradient(135deg, #9b8adff0, #8b5cf6);
+                color: white;
+            }
+            .comparison-table tr:nth-child(even) {
+                background-color: #f8fafc;
+            }
+            .correct-answer {
+                color: #38a169;
+                font-weight: bold;
+            }
+            .wrong-answer {
+                color: #e53e3e;
+                font-weight: bold;
+            }
+            .result-summary {
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                margin-bottom: 20px;
+            }
+            .score-highlight {
+                font-size: 1.5em;
+                color: #4c1d95;
+                font-weight: bold;
+            }
+        `;
+        document.head.appendChild(styles);
+
+        function startQuiz() {
+            const name = document.getElementById('nameInput').value.trim();
+            if (!name) {
+                alert('กรุณากรอกชื่อ-นามสกุล');
+                return;
+            }
+
+            document.getElementById('startForm').style.display = 'none';
+            document.getElementById('quizContent').style.display = 'block';
+            showQuestion();
+            startTimer();
+        }
+
+        function showQuestion() {
+            const questionsDiv = document.getElementById('questions');
+            if (currentQuestion >= questions.length) {
+                showResult();
+                return;
+            }
+
+            const q = questions[currentQuestion];
+            let html = `
+                <div class="question">
+                    <h3>${q.question}</h3>
+                    ${q.options.map((option, index) => `
+                        <button class="option" onclick="selectOption(${index})">${['ก', 'ข', 'ค', 'ง'][index]}. ${option}</button>
+                    `).join('')}
+                </div>
+            `;
+            questionsDiv.innerHTML = html;
+            document.querySelector('.question').style.display = 'block';
+            updateProgress();
+        }
+
+        function selectOption(optionIndex) {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            options[optionIndex].classList.add('selected');
+
+            // Show correct/incorrect immediately
+            const correctIndex = questions[currentQuestion].correct;
+            options[correctIndex].classList.add('correct');
+            if (optionIndex !== correctIndex) {
+                options[optionIndex].classList.add('incorrect');
+            } else {
+                score++;
+            }
+
+            // เก็บคำตอบของผู้ใช้
+            userAnswers[currentQuestion] = {
+                questionNumber: currentQuestion + 1,
+                question: questions[currentQuestion].question,
+                userAnswer: questions[currentQuestion].options[optionIndex],
+                correctAnswer: questions[currentQuestion].options[correctIndex],
+                isCorrect: optionIndex === correctIndex
+            };
+
+            // Wait 1 second before moving to next question
+            setTimeout(() => {
+                currentQuestion++;
+                timeLeft = 30;
+                if (currentQuestion < questions.length) {
+                    showQuestion();
+                } else {
+                    showResult();
+                }
+            }, 1000);
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    currentQuestion++;
+                    timeLeft = 30;
+                    if (currentQuestion < questions.length) {
+                        showQuestion();
+                    } else {
+                        showResult();
+                    }
+                }
+            }, 1000);
+        }
+
+        function updateProgress() {
+            const progress = (currentQuestion / questions.length) * 100;
+            document.getElementById('progress').style.width = `${progress}%`;
+        }
+
+        function showResult() {
+            clearInterval(timer);
+            document.getElementById('questions').style.display = 'none';
+            document.getElementById('timer').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+
+            const userName = document.getElementById('nameInput').value;
+            const resultHTML = `
+                <div class="result-summary">
+                    <h2>ผลการทดสอบ</h2>
+                    <p>คุณ <strong>${userName}</strong></p>
+                    <p>ได้คะแนน: <span class="score-highlight">${score} / 10</span></p>
+                </div>
+                <h3>เปรียบเทียบคำตอบ</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>ข้อที่</th>
+                            <th>คำถาม</th>
+                            <th>คำตอบของคุณ</th>
+                            <th>เฉลยคำตอบ</th>
+                            <th>ผลการตอบ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${userAnswers.map(answer => `
+                            <tr>
+                                <td>${answer.questionNumber}</td>
+                                <td>${answer.question}</td>
+                                <td class="${answer.isCorrect ? 'correct-answer' : 'wrong-answer'}">${answer.userAnswer}</td>
+                                <td class="correct-answer">${answer.correctAnswer}</td>
+                                <td>${answer.isCorrect ? '✅ ถูกต้อง' : '❌ ไม่ถูกต้อง'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                <button onclick="restartQuiz()" style="margin-top: 20px;">เริ่มทำใหม่</button>
+            `;
+            
+            document.getElementById('result').innerHTML = resultHTML;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            timeLeft = 30;
+            userAnswers = []; // เคลียร์คำตอบเก่า
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('startForm').style.display = 'block';
+            document.getElementById('nameInput').value = '';
+            document.getElementById('questions').innerHTML = '';
+            document.getElementById('timer').style.display = 'block';
+            updateProgress();
+        }
+    </script>
+</body>
+</html>
