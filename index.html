@@ -102,12 +102,86 @@
         }
         #startForm {
             text-align: center;
+            background: linear-gradient(135deg, #ffffff, #f3f4f6);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        #startForm h1 {
+            color: #4c1d95;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        #startForm h2 {
+            color: #6d28d9;
+            font-size: 1.5em;
+            margin: 25px 0;
+        }
+        .instructions {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 600px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            text-align: left;
+        }
+        .instructions ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .instructions li {
+            padding: 10px 0;
+            margin: 5px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #4b5563;
+        }
+        .instructions li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #8b5cf6;
+            font-weight: bold;
         }
         #nameInput {
-            padding: 10px;
-            margin: 10px 0;
+            padding: 12px 20px;
+            margin: 20px 0;
             width: 100%;
-            max-width: 300px;
+            max-width: 400px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        #nameInput:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+        .start-button {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        .start-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+            background: linear-gradient(135deg, #9061f9, #7c3aed);
+        }
+        .quiz-icon {
+            font-size: 3em;
+            color: #8b5cf6;
+            margin-bottom: 20px;
         }
         button {
             padding: 10px 20px;
@@ -133,11 +207,28 @@
         <h1>แบบทดสอบเรื่องวันขึ้นปีใหม่</h1>
         
         <div id="startForm">
-            <h2>คำชี้แจง</h2>
-            <p>ให้ผู้เรียนเลือกคำตอบที่ถูกต้องเพียงข้อเดียว โดยแต่ละข้อมีเวลาทำ 30 วินาที</p>
-            <input type="text" id="nameInput" placeholder="กรุณากรอกชื่อ-นามสกุล" required>
+            <div class="quiz-icon">🎊</div>
+            <h1>แบบทดสอบเรื่องวันขึ้นปีใหม่</h1>
+            
+            <div class="instructions">
+                <h2>คำชี้แจง</h2>
+                <ul>
+                    <li>แบบทดสอบมีทั้งหมด 10 ข้อ</li>
+                    <li>แต่ละข้อมีเวลาทำ 30 วินาที</li>
+                    <li>เลือกคำตอบที่ถูกต้องเพียงข้อเดียว</li>
+                    <li>ระบบจะแสดงเฉลยทันทีหลังตอบแต่ละข้อ</li>
+                    <li>คะแนนเต็ม 10 คะแนน</li>
+                </ul>
+            </div>
+
+            <input type="text" 
+                   id="nameInput" 
+                   placeholder="กรุณากรอกชื่อ-นามสกุล" 
+                   required>
             <br>
-            <button onclick="startQuiz()">เริ่มทำแบบทดสอบ</button>
+            <button onclick="startQuiz()" class="start-button">
+                เริ่มทำแบบทดสอบ
+            </button>
         </div>
 
         <div id="quizContent" style="display: none;">
